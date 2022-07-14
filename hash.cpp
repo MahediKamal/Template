@@ -1,7 +1,16 @@
 #include <bits/stdc++.h>
 using namespace std;
 #define FastRead ios_base::sync_with_stdio(false);cin.tie(NULL);
-#define sz 20007  // maximum string size
+#define sz 100005  // maximum string size
+
+#define FastRead ios_base::sync_with_stdio(false);cin.tie(NULL);
+#define Dbug1(x)                 cout << #x << " is " << x << endl;
+#define Dbug2(x,y)               cout << #x << " is " << x << "    " << #y << " is " << y << endl ;
+#define Dbug3(x,y,z)             cout << #x << " is " << x << "    " << #y << " is " << y << "    "<< #z << " is " << z << endl;
+#define Dbug4(x,y,z,a)           cout << #x << " is " << x << "    " << #y << " is " << y << "    "<< #z << " is " << z << "    " << #a << " is " << a << endl;
+#define Dbug5(x,y,z,a,b)         cout << #x << " is " << x << "    " << #y << " is " << y << "    "<< #z << " is " << z << "    " << #a << " is " << a << "    " << #b << " is " << b << endl;
+#define ff first
+#define ss second
 
 struct hash_pair {
    size_t operator()(const pair<int,int>&x)const{
@@ -38,9 +47,11 @@ public:
     HASH(){
         hashV1 = 0; hashV2 = 0;
     }
-    
+    void reset(){
+        hashV1 = 0; hashV2 = 0;
+    }
     // for a string we are generation two different(double hash) prefix hash array
-    void create_prefix_hash_table(string s){ // hash table in 0 base index
+    void create_prefix_hash_table(string &s){ // hash table in 0 base index
         int ln = s.size();
         for(int i=0; i<ln; i++){
             hashV1 = calculate_hash(hashV1, mod1, base1, s[i]);
@@ -53,7 +64,8 @@ public:
     // returning a double hash value for a whole string
     pair<int,int> hash_total_string(string s){
         hashV1 = 0; hashV2 = 0;
-        for(int j=0;j<s.size();j++){
+        int nn = s.size();
+        for(int j=0;j<nn;j++){
             hashV1 = calculate_hash(hashV1, mod1, base1, s[j]);
             hashV2 = calculate_hash(hashV2, mod2, base2, s[j]);
         }
@@ -70,3 +82,39 @@ public:
         return pr;
     }
 };
+
+int main(){
+    FastRead
+    int t, cs = 1; cin>>t;
+    calculate_pow();
+    HASH h;
+    HASH h2;
+    while(cs <= t){
+        h.reset();
+        h2.reset();
+        
+        string s; cin>>s;
+        string s2 = s;
+        
+        h.create_prefix_hash_table(s);
+        reverse(s2.begin(), s2.end());
+        h2.create_prefix_hash_table(s2);
+        // 0   1   2   3   4   5   6
+        // a   b   c   d   e   f   g
+        
+// rev->  6-6 6-5 6-4 6-3 6-2 6-1 6-0
+// rev->   g   f   e   d   c   b   a
+
+// 
+        int nn = s.size();
+        for(int i=0; i<nn; i++){
+           
+            if(h.hash_val(i, nn-1) == h2.hash_val(0, nn-1-i)) {
+                int ext = i;
+                cout<<"Case "<<cs<<": "<<ext+nn<<endl;
+                break;
+            }
+        }
+        cs++;
+    }
+}
